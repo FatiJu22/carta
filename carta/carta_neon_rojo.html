@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Otro mes juntos 💌</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --neon:#ff2d55;
+    --neon-suave:#ff5c7a;
+    --neon-tenue:rgba(255,45,85,.35);
+    --neon-fondo:rgba(255,45,85,.08);
+    --negro:#0a0a0c;
+    --gris-texto:#8a8a95;
+  }
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:radial-gradient(ellipse at 50% 30%,#17171c 0%,var(--negro) 70%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-x:hidden;}
+  /* contador */
+  .contador{border:1px solid var(--neon);border-radius:12px;padding:14px 34px;text-align:center;background:var(--neon-fondo);box-shadow:0 0 20px var(--neon-tenue),inset 0 0 20px rgba(255,45,85,.05);margin-bottom:34px;animation:aparecer 0.8s ease-out, resplandor 2.5s infinite alternate;}
+  .contador span{display:block;color:var(--neon-suave);font-size:12px;letter-spacing:3px;text-transform:uppercase;text-shadow:0 0 8px var(--neon-tenue);}
+  .contador h1{color:#fff;font-size:clamp(22px,5vw,32px);font-weight:600;margin-top:4px;text-shadow:0 0 12px var(--neon-tenue),0 0 30px rgba(255,45,85,.25);}
+  .contador .sub{margin-top:6px;text-transform:none;letter-spacing:0;color:var(--gris-texto);font-size:12px;}
+  /* sobre */
+  .escena{position:relative;width:min(320px,86vw);height:230px;cursor:pointer;perspective:900px;transition:transform 0.4s ease;animation:aparecer 0.8s 0.2s ease-out backwards;}
+  .escena:hover{transform:scale(1.03);}
+  .sobre-cuerpo{position:absolute;inset:0;background:#141418;border:1px solid var(--neon);border-radius:14px;overflow:hidden;box-shadow:0 0 25px var(--neon-tenue),inset 0 0 30px rgba(255,45,85,.06);}
+  .sobre-cuerpo::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,45,85,.10) 0%,rgba(255,45,85,.03) 55%,rgba(255,45,85,.10) 100%);}
+  .solapa{position:absolute;left:0;right:0;top:0;height:118px;transform-origin:top center;transition:transform 0.7s cubic-bezier(.4,0,.2,1);z-index:3;clip-path:polygon(0 0,100% 0,50% 100%);}
+  .solapa-frontal{position:absolute;inset:0;background:#1c1c22;border-bottom:1px solid var(--neon);box-shadow:inset 0 -12px 24px rgba(255,45,85,.10);}
+  .abierto .solapa{transform:rotateX(180deg);z-index:1;}
+  .papel{position:absolute;left:14px;right:14px;top:16px;bottom:12px;background:#191920;border:1px solid var(--neon-tenue);border-radius:10px;z-index:2;transition:transform 0.8s 0.3s cubic-bezier(.4,0,.2,1),top 0.8s 0.3s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:center;padding:16px;text-align:center;}
+  .papel span{color:var(--neon-suave);font-size:14px;letter-spacing:2px;text-shadow:0 0 10px var(--neon-tenue);}
+  .abierto .papel{top:-85px;transform:translateY(-30px);box-shadow:0 0 25px var(--neon-tenue);}
+  .corazon-sobre{position:absolute;left:50%;top:44px;transform:translateX(-50%);z-index:4;width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:#141418;border:1px solid var(--neon);border-radius:50%;box-shadow:0 0 18px var(--neon-tenue);transition:opacity 0.4s,transform 0.4s;}
+  .corazon-sobre svg{width:24px;height:24px;color:var(--neon);filter:drop-shadow(0 0 6px var(--neon));animation:latido 1.2s infinite;}
+  .abierto .corazon-sobre{opacity:0;transform:translateX(-50%) scale(0.3);}
+  .hint{margin-top:22px;color:var(--gris-texto);font-size:14px;animation:aparecer 0.8s 0.4s ease-out backwards;}
+  .botones{display:none;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:30px;animation:aparecer 0.7s ease-out;}
+  .botones.visible{display:flex;}
+  .btn{border:1px solid var(--neon);border-radius:10px;padding:12px 26px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.25s;font-family:inherit;background:var(--neon-fondo);color:var(--neon-suave);box-shadow:0 0 14px var(--neon-tenue);}
+  .btn:hover{background:rgba(255,45,85,.18);box-shadow:0 0 26px var(--neon-tenue);transform:translateY(-2px);}
+  .btn:active{transform:scale(0.96);}
+  /* modal carta */
+  .modal{position:fixed;inset:0;background:rgba(5,5,8,.75);display:none;align-items:center;justify-content:center;padding:20px;z-index:50;backdrop-filter:blur(5px);}
+  .modal.visible{display:flex;}
+  .carta{background:#131318;border:1px solid var(--neon);max-width:480px;width:100%;max-height:85vh;overflow-y:auto;border-radius:16px;padding:38px 32px;position:relative;box-shadow:0 0 40px var(--neon-tenue),inset 0 0 30px rgba(255,45,85,.04);transform:scale(.9) rotate(-1deg);opacity:0;transition:transform 0.5s cubic-bezier(.34,1.56,.64,1),opacity 0.4s;}
+  .modal.visible .carta{transform:scale(1) rotate(0);opacity:1;}
+  .carta::before{content:'';position:absolute;top:0;left:30px;right:30px;height:4px;background:repeating-linear-gradient(90deg,var(--neon) 0 8px,transparent 8px 16px);border-radius:0 0 4px 4px;box-shadow:0 0 10px var(--neon-tenue);}
+  .carta h2{color:var(--neon);font-size:22px;text-align:center;margin-bottom:4px;text-shadow:0 0 10px var(--neon-tenue);}
+  .carta .fecha{text-align:center;color:var(--gris-texto);font-size:13px;margin-bottom:20px;}
+  .carta p{color:#c8c8d2;font-size:15px;line-height:1.9;margin-bottom:14px;}
+  .carta{scrollbar-width:none;-ms-overflow-style:none;}
+  .carta::-webkit-scrollbar{display:none;width:0;height:0;}
+  .carta p strong{color:var(--neon-suave);}
+  .carta .firma{text-align:right;color:var(--neon-suave);font-style:italic;margin-top:8px;text-shadow:0 0 8px var(--neon-tenue);}
+  .cerrar{position:absolute;top:12px;right:14px;background:none;border:none;font-size:22px;color:var(--gris-texto);cursor:pointer;line-height:1;}
+  .cerrar:hover{color:var(--neon);text-shadow:0 0 8px var(--neon);}
+  .corazon-flotante{position:fixed;bottom:-30px;pointer-events:none;z-index:40;animation:flotar 5s linear forwards;filter:drop-shadow(0 0 6px var(--neon));}
+  @keyframes latido{0%,100%{transform:scale(1);}30%{transform:scale(1.2);}45%{transform:scale(.95);}60%{transform:scale(1.12);}}
+  @keyframes flotar{0%{transform:translateY(0) rotate(0);opacity:0;}10%{opacity:.95;}100%{transform:translateY(-110vh) rotate(25deg);opacity:0;}}
+  @keyframes aparecer{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes resplandor{from{box-shadow:0 0 20px var(--neon-tenue),inset 0 0 20px rgba(255,45,85,.05);}to{box-shadow:0 0 34px rgba(255,45,85,.5),inset 0 0 26px rgba(255,45,85,.1);}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
+</head>
+<body>
+
+<div class="contador">
+  <span>celebrando</span>
+  <h1 id="titulo-mes">¡Otro mes juntos!</h1>
+  <span class="sub" id="contador-meses"></span>
+</div>
+
+<div class="escena" id="escena" role="button" tabindex="0" aria-label="Abrir carta">
+  <div class="papel"><span>✦ con todo mi amor ✦</span></div>
+  <div class="sobre-cuerpo"></div>
+  <div class="solapa"><div class="solapa-frontal"></div></div>
+  <div class="corazon-sobre"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.9-9.7-9.2C.7 8.6 2.6 5 6.1 5c2 0 3.5 1.1 4.4 2.6L12 9l1.5-1.4C14.4 6.1 15.9 5 17.9 5c3.5 0 5.4 3.6 3.8 6.8C19.5 16.1 12 21 12 21z"/></svg></div>
+</div>
+<p class="hint" id="hint">Haz clic en el sobre para abrirlo</p>
+
+<div class="botones" id="botones">
+  <button class="btn" id="btn-carta">Leer carta</button>
+  <button class="btn" id="btn-corazones">Lluvia de corazones</button>
+</div>
+
+<div class="modal" id="modal">
+  <div class="carta">
+    <button class="cerrar" id="cerrar" aria-label="Cerrar">✕</button>
+    <h2>Mi corazoncito de meloncito</h2>
+    <p class="fecha" id="fecha-carta"></p>
+    <p>Hoy no es un día cualquiera cada 20 de cada mes, celebramos <strong>otro mes juntos</strong>, y quiero que sepas que cada mes a tu lado vale demasiado.</p>
+    <p>Gracias por cada risa, por cada abrazo cuando el mundo pesa, por entenderme incluso cuando yo no me entiendo. Contigo aprendí que el amor no son solo palabras bonitas, es quedarse, es cuidar, es elegirse todos los días.</p>
+    <p>No sé qué nos espera en un futuro, pero sí sé con certeza que quiero vivirlo contigo. Mes a mes, año a año, dia a dia.</p>
+    <p>Quiero decirte que desde que te conoci me has alegrado mis dìas, cada tiempo, cada momento vivido contigo es lo mas especial que guardo en mi corazòn.</p>
+    <p>Tal vez no soy lo que esperas pero dentro de mi locura y mi forma de ser te demuestro que no puedo sin ti, nunca quisiera perder esa sonrisita y esos ojitos tan preciosos que tienes, gracias por compartir conmigo y las experiencias que me has regalado juntos.</p>
+    <p>Me gustass muchooo, diosss me encantass, tus manitas, tus brazossss, tus ojitos preciosos, tus pestañitas, tu boquita, tus piesitos, me gusta todo de ti, este sentimiento no se podra borrar nunca, vivo enamorada de ti desde que te conocí,<strong>Te amo muchoo mi vidita hermosa</strong></p>
+    <p>Feliz mes, mi vida. Que sean muchos, muchos más.</p>
+    <p class="firma">— Con todo mi corazón, fati ❤</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var escena=document.getElementById('escena'),hint=document.getElementById('hint'),
+      botones=document.getElementById('botones'),modal=document.getElementById('modal'),abierta=false;
+
+  // ---- Personaliza aquí ----
+  var MES_INICIO = new Date('2025-05-20'); // cambia por tu fecha de aniversario (año, mes-1, día)
+  // ---------------------------
+
+  var ahora=new Date();
+  var meses=(ahora.getFullYear()-MES_INICIO.getFullYear())*12+(ahora.getMonth()-MES_INICIO.getMonth());
+  if(meses<1)meses=1;
+  document.getElementById('contador-meses').textContent='mes '+meses+' de muchos más ❤';
+  document.getElementById('titulo-mes').textContent='¡Otro mes juntos!';
+  var fechaCarta=new Date(ahora.getFullYear(),ahora.getMonth(),20);
+  document.getElementById('fecha-carta').textContent=fechaCarta.toLocaleDateString('es',{day:'numeric',month:'long',year:'numeric'});
+
+  function corazones(cantidad){
+    for(var i=0;i<cantidad;i++){
+      var h=document.createElement('div');h.className='corazon-flotante';
+      var size=12+Math.random()*18;
+      h.innerHTML='<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" fill="'+(Math.random()>.4?'#ff2d55':'#ff7a92')+'"><path d="M12 21s-7.5-4.9-9.7-9.2C.7 8.6 2.6 5 6.1 5c2 0 3.5 1.1 4.4 2.6L12 9l1.5-1.4C14.4 6.1 15.9 5 17.9 5c3.5 0 5.4 3.6 3.8 6.8C19.5 16.1 12 21 12 21z"/></svg>';
+      h.style.left=(Math.random()*95)+'vw';
+      h.style.animationDelay=(Math.random()*1.5)+'s';
+      document.body.appendChild(h);
+      (function(el){setTimeout(function(){el.remove();},7000);})(h);
+    }
+  }
+
+  function abrir(){
+    if(abierta)return;abierta=true;
+    escena.classList.add('abierto');
+    hint.style.display='none';
+    setTimeout(function(){botones.classList.add('visible');corazones(14);},800);
+  }
+  escena.addEventListener('click',abrir);
+  escena.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();abrir();}});
+  function cerrarCarta(){
+    abierta=false;
+    escena.classList.remove('abierto');
+    hint.style.display='block';
+    botones.classList.remove('visible');
+    modal.classList.remove('visible');
+  }
+  document.getElementById('btn-carta').addEventListener('click',function(){modal.classList.add('visible');});
+  document.getElementById('btn-corazones').addEventListener('click',function(){corazones(24);});
+  document.getElementById('cerrar').addEventListener('click',function(){modal.classList.remove('visible');});
+  modal.addEventListener('click',function(e){if(e.target===modal)modal.classList.remove('visible');});
+  // Tocar fuera del sobre, los botones o la carta cierra el sobre
+  document.addEventListener('click',function(e){
+    if(!abierta)return;
+    if(e.target.closest('.escena')||e.target.closest('.botones')||e.target.closest('.modal'))return;
+    cerrarCarta();
+  });
+})();
+</script>
+</body>
+</html>
